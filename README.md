@@ -37,7 +37,7 @@ Para clonar y ejecutar este proyecto localmente, seguí estos pasos:
 # 1. Clonar el repositorio
 Bash
 git clone [https://github.com/TU_USUARIO_GITHUB/labtrack-inventory-system.git](https://github.com/TU_USUARIO_GITHUB/labtrack-inventory-system.git)
-cd labtrack-inventory-system
+
 
 # 2. Configurar Variables de Entorno
 Crea un archivo .env dentro de la carpeta /labtrack-backend basándote en las credenciales de tu base de datos PostgreSQL local:
