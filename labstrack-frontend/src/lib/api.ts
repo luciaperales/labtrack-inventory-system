@@ -11,7 +11,7 @@ export async function getReactivos(): Promise<Reactivo[]> {
   
   const datosBackend = await res.json();
   
-  // Mapeamos los datos del backend (fecha_ingreso) al formato que espera Lovable (fechaIngreso)
+  // Mapear los datos del backend de snake_case a camelCase para la UI
   return datosBackend.map((item: any) => ({
     id: item.id,
     nombre: item.nombre,
@@ -28,7 +28,7 @@ export async function getReactivos(): Promise<Reactivo[]> {
  * POST /api/reactivos
  */
 export async function createReactivo(input: ReactivoInput): Promise<Reactivo> {
-  // Convertimos el objeto de Lovable al formato snake_case que espera Postgres
+  // Convertir el objeto de Lovable al formato snake_case que espera Postgres
   const cuerpoBackend = {
     nombre: input.nombre,
     formula: input.formula,
@@ -47,7 +47,7 @@ export async function createReactivo(input: ReactivoInput): Promise<Reactivo> {
   if (!res.ok) throw new Error('Error al crear el reactivo');
   const nuevoItem = await res.json();
 
-  // Devolvemos el objeto mapeado de vuelta a camelCase para la UI
+  // Devolver el objeto mapeado de vuelta a camelCase para la UI
   return {
     ...nuevoItem,
     fechaIngreso: nuevoItem.fecha_ingreso ? nuevoItem.fecha_ingreso.slice(0, 10) : ''

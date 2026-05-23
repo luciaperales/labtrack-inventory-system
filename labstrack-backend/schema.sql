@@ -1,4 +1,4 @@
--- Esquema de Base de Datos para LabTrack (PostgreSQL / MySQL compatible)
+-- Esquema de Base de Datos para LabTrack (PostgreSQL / MySQL )
 CREATE TABLE IF NOT EXISTS reactivos (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS reactivos (
     fecha_ingreso DATE DEFAULT CURRENT_DATE
 );
 
--- Datos semilla iniciales (opcional pero recomendado para testing rápido)
+-- Datos semilla iniciales 
 INSERT INTO reactivos (nombre, formula, cantidad, unidad, ubicacion, estado) VALUES
 ('Ácido Clorhídrico', 'HCl', 500, 'ml', 'Estante A-1', 'Disponible'),
 ('Hidróxido de Sodio', 'NaOH', 50, 'g', 'Estante B-2', 'Critico'),

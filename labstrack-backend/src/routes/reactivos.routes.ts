@@ -6,6 +6,6 @@ const router = Router();
 router.get('/', getReactivos);
 router.post('/', createReactivo);
 router.put('/:id', updateReactivo);
-router.delete('/:id', deleteReactivo); // Asegurar el nombre correcto
+router.delete('/:id', deleteReactivo); 
 
 export default router;
