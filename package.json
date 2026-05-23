@@ -1,0 +1,17 @@
+{
+  "name": "labtrack-pipeline",
+  "version": "1.0.0",
+  "description": "Automatización de entorno para LabTrack",
+  "main": "index.js",
+  "scripts": {
+    "install-all": "concurrently \"npm install --prefix labstrack-backend\" \"npm install --prefix labstrack-frontend\"",
+    "dev": "concurrently \"npm run dev --prefix labstrack-backend\" \"npm run dev --prefix labstrack-frontend\"",
+    "test-back": "npm run test --prefix labstrack-backend\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
