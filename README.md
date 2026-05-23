@@ -162,7 +162,12 @@ LabTrack fue desarrollado como una solución enfocada en:
 - Optimización del control de stock químico
 - Reducción de errores manuales
 - Escalabilidad y mantenibilidad del sistema
-
+- 
+## 🗺️ Roadmap / Próximas Implementaciones
+Con el objetivo de llevar LabTrack a un entorno de producción industrial y bajo normas de calidad, se planifican las siguientes mejoras:
+- **Seguridad (Ciberdefensa):** Implementación de autenticación JWT y control de acceso basado en roles (RBAC) para proteger los endpoints de la API.
+- **Trazabilidad Química:** Incorporación de alertas automáticas por fecha de vencimiento de reactivos y control de ubicación física (Góndola/Heladera/Depósito).
+- **Auditoría:** Registro histórico de movimientos de stock para cumplimiento de normativas de laboratorio.
 ---
 
 ## 📄 Licencia
