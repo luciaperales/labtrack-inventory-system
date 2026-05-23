@@ -15,3 +15,12 @@ INSERT INTO reactivos (nombre, formula, cantidad, unidad, ubicacion, estado) VAL
 ('Ácido Clorhídrico', 'HCl', 500, 'ml', 'Estante A-1', 'Disponible'),
 ('Hidróxido de Sodio', 'NaOH', 50, 'g', 'Estante B-2', 'Critico'),
 ('Sulfato de Cobre', 'CuSO4', 0, 'g', 'Estante A-3', 'Agotado');
+
+CREATE TABLE IF NOT EXISTS usuarios (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    rol VARCHAR(50) DEFAULT 'analista', -- 'analista' o 'administrador'
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
