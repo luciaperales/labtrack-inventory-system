@@ -244,7 +244,3 @@ labtrack-fullstack/
 Este proyecto se encuentra bajo la licencia MIT.
 
 ---
-
-## 📄 Licencia
-
-Este proyecto se encuentra bajo la licencia MIT.
