@@ -1,4 +1,4 @@
-import { createFileRoute, useRouter, redirect } from "@tanstack/react-router";
+import { createFileRoute, useRouter, redirect, Navigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, FlaskConical, Plus, XCircle, LogOut, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -28,7 +28,7 @@ import {
 export const Route = createFileRoute("/")({
   beforeLoad: () => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-    
+
     if (!token) {
       throw redirect({
         to: "/login",
@@ -39,7 +39,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
-  const { usuario, logoutUser, cargando } = useAuth(); 
+  const { usuario, logoutUser, cargando } = useAuth();
   const router = useRouter();
 
   const [reactivos, setReactivos] = useState<Reactivo[]>([]);
@@ -65,7 +65,7 @@ function Dashboard() {
     }
   }, [usuario]);
 
-  //  Si está cargando la sesión, muestra un spinner
+
   if (cargando) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-900 text-white">
@@ -74,22 +74,17 @@ function Dashboard() {
     );
   }
 
-  // Si el usuario no existe, redirige limpiamente a /login
+
   if (!usuario) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
-      router.navigate({ to: "/login" });
-    }, [router]);
-    
-    return null; //
+    return <Navigate to="/login" replace />;
   }
 
-  // Cálculo de Métricas optimizado con useMemo
-    const metrics = useMemo(() => ({
-        total: reactivos.length,
-        criticos: reactivos.filter((r) => r.estado === "Critico").length,
-        agotados: reactivos.filter((r) => r.estado === "Agotado").length,
-      }), [reactivos]);
+  // Cálculo de Métricas
+  const metrics = useMemo(() => ({
+    total: reactivos.length,
+    criticos: reactivos.filter((r) => r.estado === "Critico").length,
+    agotados: reactivos.filter((r) => r.estado === "Agotado").length,
+  }), [reactivos]);
 
   const handleSubmit = async (data: ReactivoInput) => {
     try {
@@ -169,16 +164,6 @@ function Dashboard() {
               </Button>
             )}
 
-            {/* Botón de Cerrar Sesión */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={logoutUser}
-              className="text-slate-400 hover:text-slate-600"
-              title="Cerrar sesión"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
 
             <Button
               onClick={() => { setEditing(null); setFormOpen(true); }}
@@ -187,6 +172,21 @@ function Dashboard() {
               <Plus className="mr-1.5 h-4 w-4" />
               Registrar Reactivo
             </Button>
+
+            {/* Botón de Cerrar Sesión */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={async () => {
+                await router.navigate({ to: "/login" });
+                logoutUser();
+              }}
+              className="text-slate-400 hover:text-slate-600 hover:bg-red-400"
+              title="Cerrar sesión"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
+
           </div>
         </div>
       </header>
