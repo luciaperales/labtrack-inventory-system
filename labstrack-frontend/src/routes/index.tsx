@@ -1,6 +1,6 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { AlertTriangle, FlaskConical, Plus, XCircle, LogOut } from "lucide-react"; 
+import { AlertTriangle, FlaskConical, Plus, XCircle, LogOut, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
@@ -8,6 +8,7 @@ import { MetricCard } from "@/components/labtrack/MetricCard";
 import { ReactivosTable } from "@/components/labtrack/ReactivosTable";
 import { ReactivoForm } from "@/components/labtrack/ReactivoForm";
 import { useAuth } from "@/context/AuthContext";
+import { Link } from "@tanstack/react-router";
 
 
 import type { Reactivo, ReactivoInput } from "@/types/reactivo";
@@ -29,7 +30,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
-  const { usuario, logoutUser, cargando } = useAuth(); 
+  const { usuario, logoutUser, cargando } = useAuth();
   const router = useRouter(); // Instancia del enrutador de TanStack
 
   const [reactivos, setReactivos] = useState<Reactivo[]>([]);
@@ -50,13 +51,13 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    // Solo cargam los reactivos si el usuario ya se autenticó
+    // Solo carga los reactivos si el usuario ya se autenticó
     if (usuario) {
       load();
     }
   }, [usuario]);
 
-  // CONTROL DE ACCESO VISUAL: Si está cargando la sesión, muestra un spinner
+  //  Si está cargando la sesión, muestra un spinner
   if (cargando) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-900 text-white">
@@ -65,13 +66,13 @@ function Dashboard() {
     );
   }
 
-  // CONTROL DE ACCESO VISUAL: Si el usuario no existe, redirige limpiamente a /login
+  // Si el usuario no existe, redirige limpiamente a /login
   if (!usuario) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
       router.navigate({ to: "/login" });
     }, [router]);
-    
+
     return null;
   }
 
@@ -93,7 +94,7 @@ function Dashboard() {
         setReactivos((prev) => [nuevo, ...prev]);
         toast.success("Reactivo registrado");
       }
-      setFormOpen(false); // Cerramos el modal tras guardar
+      setFormOpen(false); // Cerrar el modal tras guardar
     } catch (err: any) {
       toast.error(err.message || "No se pudo guardar el reactivo");
     }
@@ -145,6 +146,20 @@ function Dashboard() {
               </span>
               {usuario.rol === 'administrador' ? ' Administrador' : 'Analista'}
             </div>
+
+
+            {usuario.rol === 'administrador' && (
+              <Button
+                asChild
+                variant="outline"
+                className="border-cyan-200 bg-cyan-50 text-cyan-700 hover:bg-cyan-100 hover:text-cyan-800 shadow-sm"
+              >
+                <Link to="/admin/usuarios">
+                  <Users className="mr-1.5 h-4 w-4" />
+                  Gestionar Personal
+                </Link>
+              </Button>
+            )}
 
             {/* Botón de Cerrar Sesión */}
             <Button

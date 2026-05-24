@@ -44,8 +44,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logoutUser = () => {
     setToken(null);
     setUsuario(null);
-    localStorage.removeItem('labtrack_token');
-    localStorage.removeItem('labtrack_usuario');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user_role');
   };
 
   return (

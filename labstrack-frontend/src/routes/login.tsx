@@ -24,9 +24,13 @@ function Login() {
 
     try {
       const data = await login(email, password);
-      loginUser(data.token, data.usuario); // Guarda la sesión globalmente en el Context
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user_role', data.usuario.rol); // Guardamos 'administrador' o 'analista'
+
+      // Guarda la sesión globalmente en tu Context existente
+      loginUser(data.token, data.usuario); 
       
-      // CIBERDEFENSA / UX: Redireccionamos al dashboard de inmediato una vez autenticado
+      // Redirecciona al dashboard de inmediato una vez autenticado
       router.navigate({ to: "/" }); 
     } catch (err: any) {
       setError(err.message || "Error al iniciar sesión");
