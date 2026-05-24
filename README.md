@@ -1,25 +1,31 @@
 # LabTrack 🧪
 
-## Sistema de Control de Stock para Laboratorios Químicos
+## Sistema de Gestión de Stock para Laboratorios Químicos
 
-### 🌟 Automatización y Rigurosidad Industrial mediante Software
-
-**LabTrack** es una solución desarrollada para optimizar la gestión y control de inventario de reactivos y muestras en laboratorios químicos, industriales y de investigación.
-
-El sistema resuelve problemáticas reales de almacenamiento mediante:
-
-- Alertas automáticas de stock crítico
-- Manejo estricto de unidades de medida
-- Persistencia relacional de datos
-- Dashboard operativo en tiempo real
+### 🌟 Automatización, trazabilidad y control seguro de inventario químico.
 
 ---
 
-## 🚀 Características Principales
+## 🎥 Demo del Sistema
 
-### 📦 CRUD Completo de Reactivos
+### 📊 Dashboard y Gestión de Reactivos
 
-Registro, edición, actualización y eliminación de insumos químicos en tiempo real.
+![Demo Dashboard](./assets/demolabtrack.gif)
+
+---
+
+**LabTrack** es una plataforma fullstack para optimizar la gestión y control de inventario de reactivos y muestras en laboratorios químicos, industriales y de investigación.
+
+El sistema permite gestionar inventario en tiempo real, visualizar métricas críticas y garantizar seguridad mediante autenticación JWT y control de acceso basado en roles (RBAC).
+
+# 🚀 Características Principales
+
+## 📦 Gestión Completa de Reactivos (CRUD)
+
+- Alta de reactivos químicos
+- Edición y actualización en tiempo real
+- Eliminación segura de registros
+- Persistencia relacional con PostgreSQL
 
 ---
 
@@ -30,10 +36,28 @@ Visualización dinámica del estado del inventario:
 - Total de reactivos registrados
 - Reactivos en estado crítico
 - Reactivos agotados
-- Alertas automáticas cuando el stock es menor a **50g/ml**
+- Alertas automáticas de stock bajo
+- Estados visuales mediante colores contextuales
 
 ---
+## 🔐 Seguridad y Autenticación
 
+### Implementación de autenticación JWT
+
+- Login seguro mediante tokens
+- Protección de endpoints privados
+- Persistencia de sesión autenticada
+
+### RBAC (Role-Based Access Control)
+
+Control de acceso basado en roles:
+
+- Administrador
+- Analista
+
+Cada rol posee permisos específicos sobre las operaciones del sistema.
+
+---
 ### 🎨 UI Contextual y Escaneable
 
 Interfaz moderna e intuitiva basada en códigos de color estandarizados para facilitar la toma de decisiones rápidas dentro del laboratorio o planta industrial.
@@ -45,7 +69,9 @@ Interfaz moderna e intuitiva basada en códigos de color estandarizados para fac
 - Arquitectura desacoplada
 - Tipado estricto con TypeScript
 - Testing automatizado con Jest
-- Cobertura de lógica crítica de negocio
+- Validación de lógica crítica de negocio
+- Código modular y escalable
+
 
 ---
 
@@ -56,13 +82,15 @@ Interfaz moderna e intuitiva basada en códigos de color estandarizados para fac
 - React.js
 - TypeScript
 - Tailwind CSS
-- Lucide Icons
+- Lucide React
 
 ### Backend
 
 - Node.js
 - Express.js
 - TypeScript
+- JWT Authentication
+- RBAC Authorization
 - Jest & TS-Jest
 
 ### Base de Datos
@@ -81,28 +109,9 @@ git clone https://github.com/TU_USUARIO_GITHUB/labtrack-inventory-system.git
 
 ---
 
-### 2️⃣ Configurar Variables de Entorno
+## 2️⃣ Instalar dependencias
 
-Crear un archivo `.env` dentro de:
-
-```bash
-/labtrack-backend
-```
-
-Agregar:
-
-```env
-PORT=5000
-DATABASE_URL=postgresql://usuario:password@localhost:5432/tu_base_de_datos
-```
-
----
-
-### 3️⃣ Instalar dependencias automáticamente ⚡
-
-Gracias a la integración con `concurrently`, no es necesario instalar dependencias manualmente carpeta por carpeta.
-
-Desde la raíz del proyecto ejecutar:
+Desde la raíz del proyecto:
 
 ```bash
 npm run install-all
@@ -110,7 +119,28 @@ npm run install-all
 
 ---
 
-### 4️⃣ Ejecutar el entorno de desarrollo 🚀
+## 3️⃣ Configurar variables de entorno
+
+Crear un archivo `.env` dentro de:
+
+```bash
+/labtrack-backend
+```
+
+### Variables necesarias
+
+```env
+PORT=5000
+
+DATABASE_URL=postgresql://usuario:password@localhost:5432/labtrack
+
+JWT_SECRET=tu_clave_secreta
+JWT_EXPIRES_IN=1d
+```
+
+---
+
+## 4️⃣ Ejecutar el entorno de desarrollo
 
 Levantar frontend y backend simultáneamente:
 
@@ -119,6 +149,7 @@ npm run dev
 ```
 
 ---
+
 
 ## 🧪 Testing y Calidad de Código
 
@@ -137,37 +168,81 @@ npm run test-back
 
 ---
 
-## 📂 Arquitectura del Proyecto (Monorepo)
+# 📂 Arquitectura del Proyecto
 
 ```bash
 labtrack-fullstack/
 │
-├── labtrack-backend/        # API REST (Node.js + Express + PostgreSQL)
-│   ├── src/                 # Controladores, rutas y configuración
-│   ├── utils/               # Lógica de negocio y helpers
-│   └── schema.sql           # Estructura e inicialización de la BD
+├── assets/                     # GIFs e imágenes del README
 │
-├── labtrack-frontend/       # Cliente Web (React + Vite)
+├── labtrack-backend/
+│   ├── src/
+│   │   ├── controllers/        # Controladores HTTP
+│   │   ├── routes/             # Endpoints API REST
+│   │   ├── middlewares/        # Auth JWT y RBAC
+│   │   ├── services/           # Lógica de negocio
+│   │   ├── utils/              # Helpers y funciones auxiliares
+│   │   └── config/             # Configuración general
+│   │
+│   ├── tests/                  # Tests unitarios
+│   └── schema.sql              # Estructura de PostgreSQL
 │
-└── package.json             # Scripts globales y automatización
+├── labtrack-frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── hooks/
+│   │   └── context/
+│
+└── package.json                # Scripts globales y automatización
 ```
 
 ---
 
-## 📌 Objetivo del Proyecto
+# 📸 Capturas
 
-LabTrack fue desarrollado como una solución enfocada en:
+## Dashboard
 
-- Digitalización de procesos de laboratorio
-- Optimización del control de stock químico
-- Reducción de errores manuales
-- Escalabilidad y mantenibilidad del sistema
+![Auth](./assets/dashboard.png)
+
+---
+
+## Gestión de Reactivos
+
+![CRUD](./assets/adminview2.png)
+
+
+---
+
+📈 Objetivos del Proyecto
+
+- Digitalizar procesos de laboratorio
+- Mejorar trazabilidad de insumos químicos
+- Reducir errores manuales
+- Implementar seguridad profesional en APIs
+- Aplicar buenas prácticas fullstack
+- Construir una arquitectura escalable
+
+---
 - 
-## 🗺️ Roadmap / Próximas Implementaciones
-Con el objetivo de llevar LabTrack a un entorno de producción industrial y bajo normas de calidad, se planifican las siguientes mejoras:
-- **Seguridad (Ciberdefensa):** Implementación de autenticación JWT y control de acceso basado en roles (RBAC) para proteger los endpoints de la API.
-- **Trazabilidad Química:** Incorporación de alertas automáticas por fecha de vencimiento de reactivos y control de ubicación física (Góndola/Heladera/Depósito).
-- **Auditoría:** Registro histórico de movimientos de stock para cumplimiento de normativas de laboratorio.
+# 🧠 Conceptos Aplicados
+
+- Arquitectura cliente-servidor
+- APIs RESTful
+- Autenticación JWT
+- Role-Based Access Control (RBAC)
+- Manejo de estado en frontend
+- Persistencia relacional
+- Testing automatizado
+- Monorepo architecture
+
+---
+
+# 📄 Licencia
+
+Este proyecto se encuentra bajo la licencia MIT.
+
 ---
 
 ## 📄 Licencia
