@@ -24,3 +24,4 @@ CREATE TABLE IF NOT EXISTS usuarios (
     rol VARCHAR(50) DEFAULT 'analista', -- 'analista' o 'administrador'
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+

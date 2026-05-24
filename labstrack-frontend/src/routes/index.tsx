@@ -1,12 +1,18 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { AlertTriangle, FlaskConical, Plus, XCircle } from "lucide-react";
+import { AlertTriangle, FlaskConical, Plus, XCircle, LogOut } from "lucide-react"; 
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { MetricCard } from "@/components/labtrack/MetricCard";
 import { ReactivosTable } from "@/components/labtrack/ReactivosTable";
 import { ReactivoForm } from "@/components/labtrack/ReactivoForm";
+import { useAuth } from "@/context/AuthContext";
+
+
+import type { Reactivo, ReactivoInput } from "@/types/reactivo";
+import { createReactivo, deleteReactivo, getReactivos, updateReactivo } from "@/lib/api";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,14 +23,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import type { Reactivo, ReactivoInput } from "@/types/reactivo";
-import { createReactivo, deleteReactivo, getReactivos, updateReactivo } from "@/lib/api";
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
 });
 
 function Dashboard() {
+  const { usuario, logoutUser, cargando } = useAuth(); 
+  const router = useRouter(); // Instancia del enrutador de TanStack
+
   const [reactivos, setReactivos] = useState<Reactivo[]>([]);
   const [loading, setLoading] = useState(true);
   const [formOpen, setFormOpen] = useState(false);
@@ -43,9 +50,32 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    load();
-  }, []);
+    // Solo cargam los reactivos si el usuario ya se autenticó
+    if (usuario) {
+      load();
+    }
+  }, [usuario]);
 
+  // CONTROL DE ACCESO VISUAL: Si está cargando la sesión, muestra un spinner
+  if (cargando) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-900 text-white">
+        <p className="text-sm font-medium tracking-wide">Cargando ..</p>
+      </div>
+    );
+  }
+
+  // CONTROL DE ACCESO VISUAL: Si el usuario no existe, redirige limpiamente a /login
+  if (!usuario) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEffect(() => {
+      router.navigate({ to: "/login" });
+    }, [router]);
+    
+    return null;
+  }
+
+  // Cálculo de Métricas optimizado con useMemo
   const metrics = useMemo(() => ({
     total: reactivos.length,
     criticos: reactivos.filter((r) => r.estado === "Critico").length,
@@ -63,8 +93,9 @@ function Dashboard() {
         setReactivos((prev) => [nuevo, ...prev]);
         toast.success("Reactivo registrado");
       }
-    } catch {
-      toast.error("No se pudo guardar el reactivo");
+      setFormOpen(false); // Cerramos el modal tras guardar
+    } catch (err: any) {
+      toast.error(err.message || "No se pudo guardar el reactivo");
     }
   };
 
@@ -74,8 +105,8 @@ function Dashboard() {
       await deleteReactivo(toDelete.id);
       setReactivos((prev) => prev.filter((r) => r.id !== toDelete.id));
       toast.success("Reactivo eliminado");
-    } catch {
-      toast.error("No se pudo eliminar");
+    } catch (err: any) {
+      toast.error(err.message || "No se pudo eliminar");
     } finally {
       setToDelete(null);
     }
@@ -101,13 +132,31 @@ function Dashboard() {
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Indicador de Usuario Logueado */}
+            <div className="text-right hidden sm:block">
+              <p className="text-xs font-medium text-slate-900">{usuario.nombre}</p>
+              <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">{usuario.rol}</p>
+            </div>
+
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
               </span>
-              Servidor: Conectado
+              {usuario.rol === 'administrador' ? ' Administrador' : 'Analista'}
             </div>
+
+            {/* Botón de Cerrar Sesión */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={logoutUser}
+              className="text-slate-400 hover:text-slate-600"
+              title="Cerrar sesión"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
+
             <Button
               onClick={() => { setEditing(null); setFormOpen(true); }}
               className="bg-cyan-600 text-white shadow-sm hover:bg-cyan-700"

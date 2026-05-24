@@ -7,8 +7,10 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 import appCss from "../styles.css?url";
+import { AuthProvider } from '../context/AuthContext'
 
 function NotFoundComponent() {
   return (
@@ -101,7 +103,10 @@ function RootShell({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {children}
+        {/* Envuelve acá en el Shell físico para asegurarse de que se monte antes que cualquier lógica de rutas */}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
         <Scripts />
       </body>
     </html>
