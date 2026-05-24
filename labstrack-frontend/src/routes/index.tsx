@@ -1,4 +1,4 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, useRouter, redirect } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, FlaskConical, Plus, XCircle, LogOut, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,12 +26,21 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/")({
+  beforeLoad: () => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    
+    if (!token) {
+      throw redirect({
+        to: "/login",
+      });
+    }
+  },
   component: Dashboard,
 });
 
 function Dashboard() {
-  const { usuario, logoutUser, cargando } = useAuth();
-  const router = useRouter(); // Instancia del enrutador de TanStack
+  const { usuario, logoutUser, cargando } = useAuth(); 
+  const router = useRouter();
 
   const [reactivos, setReactivos] = useState<Reactivo[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,7 +60,6 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    // Solo carga los reactivos si el usuario ya se autenticó
     if (usuario) {
       load();
     }
@@ -61,7 +69,7 @@ function Dashboard() {
   if (cargando) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-900 text-white">
-        <p className="text-sm font-medium tracking-wide">Cargando ..</p>
+        <p className="text-sm font-medium tracking-wide animate-pulse">Cargando LabTrack...</p>
       </div>
     );
   }
@@ -72,16 +80,16 @@ function Dashboard() {
     useEffect(() => {
       router.navigate({ to: "/login" });
     }, [router]);
-
-    return null;
+    
+    return null; //
   }
 
   // Cálculo de Métricas optimizado con useMemo
-  const metrics = useMemo(() => ({
-    total: reactivos.length,
-    criticos: reactivos.filter((r) => r.estado === "Critico").length,
-    agotados: reactivos.filter((r) => r.estado === "Agotado").length,
-  }), [reactivos]);
+    const metrics = useMemo(() => ({
+        total: reactivos.length,
+        criticos: reactivos.filter((r) => r.estado === "Critico").length,
+        agotados: reactivos.filter((r) => r.estado === "Agotado").length,
+      }), [reactivos]);
 
   const handleSubmit = async (data: ReactivoInput) => {
     try {

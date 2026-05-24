@@ -12,6 +12,14 @@ import ReactDOM from 'react-dom/client'
 import appCss from "../styles.css?url";
 import { AuthProvider } from '../context/AuthContext'
 
+interface MyRouterContext {
+  queryClient: QueryClient;
+  auth: {
+    usuario: any;
+    cargando: boolean;
+  };
+}
+
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -69,32 +77,20 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Labtrack: Control de reactivos" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-    ],
-  }),
-  shellComponent: RootShell,
-  component: RootComponent,
-  notFoundComponent: NotFoundComponent,
-  errorComponent: ErrorComponent,
-});
+    links: [{ rel: "stylesheet", href: appCss }],
+      }),
+      shellComponent: RootShell,
+      component: RootComponent,
+      notFoundComponent: NotFoundComponent,
+      errorComponent: ErrorComponent,
+    });
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
@@ -103,7 +99,6 @@ function RootShell({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {/* Envuelve acá en el Shell físico para asegurarse de que se monte antes que cualquier lógica de rutas */}
         <AuthProvider>
           {children}
         </AuthProvider>
