@@ -2,9 +2,7 @@ import type { Reactivo, ReactivoInput } from "@/types/reactivo";
 
 export const API_URL = 'http://localhost:5000/api';
 
-/**
- * Función auxiliar para obtener el token de seguridad guardado
- */
+
 function getAuthHeaders(): HeadersInit {
   const token = localStorage.getItem('labtrack_token');
   return {
@@ -22,7 +20,7 @@ export async function login(email: string, password: string) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
   });
-  
+
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Error al iniciar sesión');
   return data;
@@ -37,7 +35,7 @@ export async function registrar(nombre: string, email: string, password: string,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ nombre, email, password, rol }),
   });
-  
+
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Error en el registro');
   return data;
@@ -52,9 +50,9 @@ export async function getReactivos(): Promise<Reactivo[]> {
     headers: getAuthHeaders()
   });
   if (!res.ok) throw new Error('Error al obtener los reactivos');
-  
+
   const datosBackend = await res.json();
-  
+
   return datosBackend.map((item: any) => ({
     id: item.id,
     nombre: item.nombre,
@@ -63,7 +61,10 @@ export async function getReactivos(): Promise<Reactivo[]> {
     unidad: item.unidad,
     ubicacion: item.ubicacion,
     estado: item.estado,
-    fechaIngreso: item.fecha_ingreso ? item.fecha_ingreso.slice(0, 10) : ''
+    ghs_hazards: item.ghs_hazards,
+    fechaIngreso: item.fecha_ingreso
+      ? item.fecha_ingreso.slice(0, 10)
+      : ""
   }));
 }
 
@@ -77,7 +78,8 @@ export async function createReactivo(input: ReactivoInput): Promise<Reactivo> {
     cantidad: parseFloat(String(input.cantidad)),
     unidad: input.unidad,
     ubicacion: input.ubicacion,
-    estado: input.estado
+    estado: input.estado,
+    ghs_hazards: input.ghs_hazards
   };
 
   const res = await fetch(`${API_URL}/reactivos`, {
@@ -108,12 +110,13 @@ export async function updateReactivo(id: number, input: ReactivoInput): Promise<
     cantidad: parseFloat(String(input.cantidad)),
     unidad: input.unidad,
     ubicacion: input.ubicacion,
-    estado: input.estado
+    estado: input.estado,
+    ghs_hazards: input.ghs_hazards
   };
 
   const res = await fetch(`${API_URL}/reactivos/${id}`, {
     method: "PUT",
-    headers: getAuthHeaders(), 
+    headers: getAuthHeaders(),
     body: JSON.stringify(cuerpoBackend)
   });
 
@@ -135,11 +138,11 @@ export async function updateReactivo(id: number, input: ReactivoInput): Promise<
 export async function deleteReactivo(id: number | undefined): Promise<void> {
   if (!id) throw new Error('ID no válido para eliminar');
 
-  const res = await fetch(`${API_URL}/reactivos/${id}`, { 
+  const res = await fetch(`${API_URL}/reactivos/${id}`, {
     method: "DELETE",
     headers: getAuthHeaders() // 
   });
-  
+
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
     throw new Error(errorData.error || 'Error al eliminar el reactivo');

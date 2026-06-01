@@ -18,7 +18,7 @@ export const registrarUsuario = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'El correo electrónico ya está registrado' });
     }
 
-    // Encriptar la contraseña con un algoritmo de Hash robusto (Salt 10)
+
     const salt = await bcrypt.genSalt(10);
     const passwordEncriptada = await bcrypt.hash(password, salt);
 

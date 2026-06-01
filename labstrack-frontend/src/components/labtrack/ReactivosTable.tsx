@@ -2,6 +2,7 @@ import { Pencil, Trash2, FlaskConical, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "./StatusBadge";
 import type { Reactivo } from "@/types/reactivo";
+import { GHSBadges } from "@/components/GHSBadges";
 
 interface Props {
   reactivos: Reactivo[];
@@ -17,6 +18,7 @@ const formatDate = (iso: string) => {
 };
 
 export function ReactivosTable({ reactivos, loading, onEdit, onDelete }: Props) {
+  console.log(reactivos)
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-slate-200 bg-white py-20 text-slate-500">
@@ -60,15 +62,25 @@ export function ReactivosTable({ reactivos, loading, onEdit, onDelete }: Props) 
             {reactivos.map((r) => (
               <tr key={r.id} className="transition hover:bg-slate-50/70">
                 <td className="px-4 py-3 font-mono text-xs text-slate-500">#{r.id.toString().padStart(3, "0")}</td>
+
+                {/* Columna del Reactivo con Nombre, Fórmula y Pictogramas */}
                 <td className="px-4 py-3">
                   <div className="font-medium text-slate-900">{r.nombre}</div>
                   {r.formula && <div className="text-xs text-slate-400">{r.formula}</div>}
+
+                  {/* Validamos ambas opciones de tipado que puedan venir del backend */}
+                  {(r.ghs_hazards || (r as any).ghsHazards) && (
+                    <GHSBadges hazardsString={r.ghs_hazards || (r as any).ghsHazards} />
+                  )}
                 </td>
+
                 <td className="px-4 py-3 tabular-nums text-slate-700">{r.cantidad}</td>
                 <td className="px-4 py-3 text-slate-600">{r.unidad}</td>
                 <td className="px-4 py-3 text-slate-600">{r.ubicacion}</td>
                 <td className="px-4 py-3 text-slate-600">{formatDate(r.fechaIngreso)}</td>
                 <td className="px-4 py-3"><StatusBadge estado={r.estado} /></td>
+
+                {/* Columna de Acciones corregida */}
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-end gap-1">
                     <Button

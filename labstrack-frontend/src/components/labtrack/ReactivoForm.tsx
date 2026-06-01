@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { EstadoReactivo, Reactivo, ReactivoInput, UnidadReactivo } from "@/types/reactivo";
 import { Loader2 } from "lucide-react";
+import { GHS_PICTOGRAMS } from "@/components/constants/ghs"; 
 
 interface Props {
   open: boolean;
@@ -21,6 +22,7 @@ const empty: ReactivoInput = {
   unidad: "g",
   ubicacion: "",
   estado: "Disponible",
+  ghs_hazards: "", // <-- Inicializador vacío
 };
 
 export function ReactivoForm({ open, onOpenChange, initial, onSubmit }: Props) {
@@ -34,13 +36,14 @@ export function ReactivoForm({ open, onOpenChange, initial, onSubmit }: Props) {
       setData(
         initial
           ? {
-              nombre: initial.nombre,
-              formula: initial.formula ?? "",
-              cantidad: initial.cantidad,
-              unidad: initial.unidad,
-              ubicacion: initial.ubicacion,
-              estado: initial.estado,
-            }
+            nombre: initial.nombre,
+            formula: initial.formula ?? "",
+            cantidad: initial.cantidad,
+            unidad: initial.unidad,
+            ubicacion: initial.ubicacion,
+            estado: initial.estado,
+            ghs_hazards: initial.ghs_hazards ?? "", // <-- Cargamos el valor de Neon
+          }
           : empty,
       );
     }
@@ -69,9 +72,25 @@ export function ReactivoForm({ open, onOpenChange, initial, onSubmit }: Props) {
     }
   };
 
+  // Función manejadora para los checkboxes del SGA
+  const handleHazardChange = (hazardId: string, checked: boolean) => {
+    const currentHazards = data.ghs_hazards
+      ? data.ghs_hazards.split(",").map(h => h.trim()).filter(Boolean)
+      : [];
+
+    let updatedHazards: string[];
+    if (checked) {
+      updatedHazards = [...currentHazards, hazardId];
+    } else {
+      updatedHazards = currentHazards.filter(h => h !== hazardId);
+    }
+
+    setData({ ...data, ghs_hazards: updatedHazards.join(",") });
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{initial ? "Editar Reactivo" : "Registrar Reactivo"}</DialogTitle>
           <DialogDescription>
@@ -149,6 +168,52 @@ export function ReactivoForm({ open, onOpenChange, initial, onSubmit }: Props) {
                 <SelectItem value="Agotado">Agotado</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          {/* NUEVA SECCIÓN: Pictogramas de Seguridad (SGA) */}
+          <div className="grid gap-2 border-t pt-4 border-slate-100">
+            <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              Pictogramas de Seguridad (SGA)
+            </Label>
+            <div className="grid grid-cols-2 gap-2.5 mt-1">
+              {Object.values(GHS_PICTOGRAMS).map((pictogram) => {
+                const hazardsString = data.ghs_hazards || (data as any).ghsHazards || "";
+
+                const isChecked = hazardsString
+                  ? hazardsString.split(",").map((h: string) => h.trim()).includes(pictogram.id)
+                  : false;
+
+                return (
+                  <label
+                    key={pictogram.id}
+                    className={`flex items-center gap-3.5 p-2.5 rounded-xl border cursor-pointer text-xs font-medium transition-all duration-200 select-none ${isChecked
+                      ? "border-cyan-200 bg-cyan-50/40 text-cyan-950 shadow-sm ring-1 ring-cyan-100"
+                      : "border-slate-100 bg-white hover:bg-slate-50 text-slate-600"
+                      }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={(e) => handleHazardChange(pictogram.id, e.target.checked)}
+                      className="rounded border-slate-300 text-cyan-600 focus:ring-cyan-500 w-4 h-4 transition"
+                    />
+
+                    {/* Contenedor del Pictograma con Proporciones Estables */}
+                    <div className="relative w-10 h-10 flex-shrink-0 flex items-center justify-center">
+                      <img
+                        src={pictogram.icon}
+                        alt={pictogram.name}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+
+                    <span className="text-xs leading-tight font-medium text-slate-700">
+                      {pictogram.name}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
           </div>
 
           <DialogFooter className="pt-2">

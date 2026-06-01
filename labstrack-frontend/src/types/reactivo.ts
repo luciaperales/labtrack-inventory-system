@@ -10,6 +10,7 @@ export interface Reactivo {
   ubicacion: string;
   fechaIngreso: string; // ISO
   estado: EstadoReactivo;
+  ghs_hazards?: string;
 }
 
 export type ReactivoInput = Omit<Reactivo, "id" | "fechaIngreso"> & {

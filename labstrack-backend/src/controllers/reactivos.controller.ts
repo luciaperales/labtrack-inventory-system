@@ -12,13 +12,15 @@ export const getReactivos = async (req: Request, res: Response) => {
 };
 
 export const createReactivo = async (req: Request, res: Response) => {
-  const { nombre, formula, cantidad, unidad, ubicacion, estado } = req.body;
+
+  const { nombre, formula, cantidad, unidad, ubicacion, estado, ghs_hazards } = req.body;
   try {
     const query = `
-      INSERT INTO reactivos (nombre, formula, cantidad, unidad, ubicacion, estado)
-      VALUES ($1, $2, $3, $4, $5, $6) RETURNING *
+      INSERT INTO reactivos (nombre, formula, cantidad, unidad, ubicacion, estado, ghs_hazards)
+      VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *
     `;
-    const values = [nombre, formula, cantidad, unidad, ubicacion, estado || 'Disponible'];
+
+    const values = [nombre, formula, cantidad, unidad, ubicacion, estado || 'Disponible', ghs_hazards || ''];
     const result = await pool.query(query, values);
     res.status(201).json(result.rows[0]);
   } catch (error) {
@@ -29,14 +31,16 @@ export const createReactivo = async (req: Request, res: Response) => {
 
 export const updateReactivo = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { nombre, formula, cantidad, unidad, ubicacion, estado } = req.body;
+
+  const { nombre, formula, cantidad, unidad, ubicacion, estado, ghs_hazards } = req.body;
   try {
     const query = `
       UPDATE reactivos 
-      SET nombre = $1, formula = $2, cantidad = $3, unidad = $4, ubicacion = $5, estado = $6
-      WHERE id = $7 RETURNING *
+      SET nombre = $1, formula = $2, cantidad = $3, unidad = $4, ubicacion = $5, estado = $6, ghs_hazards = $7
+      WHERE id = $8 RETURNING *
     `;
-    const values = [nombre, formula, cantidad, unidad, ubicacion, estado, id];
+    // 4. Modificamos el orden de los parámetros: ghs_hazards pasa a ser $7 e id pasa a ser $8
+    const values = [nombre, formula, cantidad, unidad, ubicacion, estado, ghs_hazards || '', id];
     const result = await pool.query(query, values);
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Reactivo no encontrado' });
