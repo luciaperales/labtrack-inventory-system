@@ -25,6 +25,8 @@ export function ReactivosTable({ reactivos, loading, onEdit, onDelete }: Props) 
   // 1. Estados locales para los filtros
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedHazards, setSelectedHazards] = useState<string[]>([]);
+  const [estadoFilter, setEstadoFilter] = useState("todos");
+
 
   // 2. Lógica de filtrado en memoria (Reactiva)
   const filteredReactivos = useMemo(() => {
@@ -46,11 +48,22 @@ export function ReactivosTable({ reactivos, loading, onEdit, onDelete }: Props) 
         selectedHazards.length === 0 ||
         selectedHazards.some((hazardId) =>
           reactivoHazards.includes(hazardId)
+
+
         );
 
-      return matchesSearch && matchesHazards;
+      const matchesEstado =
+        estadoFilter === "todos"
+          ? true
+          : r.estado === estadoFilter;
+
+      return matchesSearch && matchesHazards && matchesEstado;
+
+
+
     });
-  }, [reactivos, searchTerm, selectedHazards]);
+  }, [reactivos, searchTerm, selectedHazards, estadoFilter]);
+
 
   // Manejador para prender/apagar los pictogramas del filtro
   const handleToggleHazard = (hazardId: string) => {
@@ -109,6 +122,17 @@ export function ReactivosTable({ reactivos, loading, onEdit, onDelete }: Props) 
             </button>
           )}
         </div>
+
+        <select
+          value={estadoFilter}
+          onChange={(e) => setEstadoFilter(e.target.value)}
+          className="h-9 rounded-lg border border-slate-200 bg-white px-3 text-sm"
+        >
+          <option value="todos">Todos</option>
+          <option value="Disponible">Disponible</option>
+          <option value="Critico">Crítico</option>
+          <option value="Agotado">Agotado</option>
+        </select>
 
         {/* Componente de la barra de Pictogramas */}
         <GHSFilterBar
